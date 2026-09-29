@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Award, HeartHandshake, Lightbulb, ShieldCheck } from "lucide-react";
 import { AcademyFooter } from "./AcademyFooter";
 import { AcademyHeader } from "./AcademyHeader";
@@ -12,19 +12,72 @@ const WHATSAPP_URL =
 export function AcademyPage() {
   const [messageSent, setMessageSent] = useState(false);
 
+  useEffect(() => {
+    const roots = document.querySelectorAll<HTMLElement>(
+      "section[data-purpose], footer[data-purpose]",
+    );
+    const targetSelector =
+      'h1, h2, h3, h4, p, span, blockquote, cite, img[alt]:not([alt=""]), a, button, label, input, textarea, select, [data-reveal], [data-reveal-item]';
+    const targetsByRoot = Array.from(roots, (root) => {
+      const candidates = Array.from(root.querySelectorAll<HTMLElement>(targetSelector));
+      const targets = candidates.filter((target) => {
+        if (target.closest(".hidden") || target.matches("[data-parallax]")) return false;
+        if (target.parentElement?.closest(targetSelector)) return false;
+        return !(target.hasAttribute("data-reveal") && target.querySelector("[data-reveal-item]"));
+      });
+      return { root, targets };
+    });
+
+    if (!("IntersectionObserver" in window)) {
+      targetsByRoot.forEach(({ root }) => {
+        delete root.dataset["revealPending"];
+        root.dataset["revealed"] = "true";
+      });
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const root = entry.target as HTMLElement;
+            delete root.dataset["revealPending"];
+            root.dataset["revealed"] = "true";
+            observer.unobserve(root);
+          }
+        });
+      },
+      { threshold: 0.08, rootMargin: "0px 0px -8% 0px" },
+    );
+
+    targetsByRoot.forEach(({ root, targets }) => {
+      root.dataset["revealRoot"] = "true";
+      targets.forEach((target, index) => {
+        target.dataset["reveal"] ??= "item";
+        target.dataset["revealDelay"] = String(Math.min(index, 6));
+      });
+
+      const { top, bottom } = root.getBoundingClientRect();
+      if (top >= window.innerHeight * 0.92 || bottom <= 0) {
+        root.dataset["revealPending"] = "true";
+      }
+      observer.observe(root);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <>
       <AcademyHeader />
       <section
-        className="relative h-[100dvh] min-h-[100dvh] flex items-center justify-center overflow-hidden bg-page"
+        className="relative h-[100dvh] min-h-[100dvh] flex items-center justify-center overflow-hidden bg-page bg-fixed bg-cover bg-center"
         data-purpose="hero-section"
+        data-background-image="hero"
+        data-reveal-root
+        style={{ backgroundImage: `url("${heroImage}")` }}
       >
         <div className="absolute inset-0 z-0">
-          <img
-            alt="Liderança e Formação Profissional"
-            className="w-full h-full object-cover object-center"
-            src={heroImage}
-          />
           <div className="absolute inset-0 bg-brand-blue mix-blend-multiply opacity-25"></div>
           <div className="absolute inset-0 bg-gradient-to-t from-page/85 via-page/20 to-page/5"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-page/70 via-page/20 to-transparent"></div>
@@ -34,7 +87,11 @@ export function AcademyPage() {
           <div className="max-w-4xl">
             <div className="inline-block mb-6"></div>
 
-            <h1 className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-hero-foreground tracking-tight leading-[1.12] mb-6">
+            <h1
+              className="text-2xl sm:text-4xl md:text-5xl font-extrabold text-hero-foreground tracking-tight leading-[1.12] mb-6"
+              data-reveal="title"
+              data-reveal-delay="0"
+            >
               Conhecimento que transforma.
               <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-hero-foreground via-slate-200 to-brand-goldLight">
@@ -42,7 +99,11 @@ export function AcademyPage() {
               </span>
             </h1>
 
-            <div className="flex flex-wrap items-center gap-4 mb-10">
+            <div
+              className="flex flex-wrap items-center gap-4 mb-10"
+              data-reveal="content"
+              data-reveal-delay="1"
+            >
               <a
                 className="px-7 py-3.5 bg-brand-blue hover:bg-brand-blueHover text-hero-foreground text-sm font-bold rounded-full shadow-lg transition duration-200 flex items-center gap-2"
                 href="#servicos"
@@ -183,17 +244,14 @@ export function AcademyPage() {
       </section>
 
       <section
-        className="relative flex h-[100dvh] min-h-[100dvh] items-center overflow-hidden bg-page"
+        className="relative flex h-[100dvh] min-h-[100dvh] items-center overflow-hidden bg-page bg-fixed bg-cover bg-center"
         data-purpose="audience-section"
+        data-background-image="audience"
+        data-reveal-root
         id="publico"
+        style={{ backgroundImage: `url("${audienceBackground}")` }}
       >
         <div className="absolute inset-0 z-0">
-          <img
-            alt=""
-            aria-hidden="true"
-            className="h-full w-full object-cover object-center"
-            src={audienceBackground}
-          />
           <div className="absolute inset-0 bg-brand-blue mix-blend-multiply opacity-35"></div>
           <div className="absolute inset-0 bg-gradient-to-t from-page/90 via-page/45 to-page/25"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-page/75 via-page/35 to-page/10"></div>
@@ -201,16 +259,27 @@ export function AcademyPage() {
 
         <div className="relative z-10 mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="mb-8 max-w-2xl">
-            <span className="text-xs font-bold text-brand-goldLight uppercase tracking-widest">
+            <span
+              className="text-xs font-bold text-brand-goldLight uppercase tracking-widest"
+              data-reveal="label"
+              data-reveal-delay="0"
+            >
               A Quem Nos Dirigimos
             </span>
-            <h2 className="text-xl md:text-2xl font-extrabold text-hero-foreground mt-1">
+            <h2
+              className="text-xl md:text-2xl font-extrabold text-hero-foreground mt-1"
+              data-reveal="title"
+              data-reveal-delay="1"
+            >
               Para quem trabalhamos?
             </h2>
           </div>
-          <div className="max-w-xl">
+          <div className="max-w-xl" data-reveal="content" data-reveal-delay="2">
             <div className="flex flex-col">
-              <div className="flex items-center gap-4 border-b border-white/20 py-4">
+              <div
+                className="flex items-center gap-4 border-b border-white/20 py-4"
+                data-reveal-item="0"
+              >
                 <div className="w-9 h-9 rounded-md bg-brand-blue/20 text-brand-blue flex items-center justify-center shrink-0 border border-brand-blue/30">
                   <svg
                     className="w-5 h-5"
@@ -230,7 +299,10 @@ export function AcademyPage() {
                 </span>
               </div>
 
-              <div className="flex items-center gap-4 border-b border-white/20 py-4">
+              <div
+                className="flex items-center gap-4 border-b border-white/20 py-4"
+                data-reveal-item="1"
+              >
                 <div className="w-9 h-9 rounded-md bg-brand-gold/20 text-brand-goldLight flex items-center justify-center shrink-0 border border-brand-gold/30">
                   <svg
                     className="w-5 h-5"
@@ -248,7 +320,10 @@ export function AcademyPage() {
                 <span className="text-sm font-semibold text-white">Profissionais e gestores</span>
               </div>
 
-              <div className="flex items-center gap-4 border-b border-white/20 py-4">
+              <div
+                className="flex items-center gap-4 border-b border-white/20 py-4"
+                data-reveal-item="2"
+              >
                 <div className="w-9 h-9 rounded-md bg-brand-gold/20 text-brand-goldLight flex items-center justify-center shrink-0 border border-brand-gold/30">
                   <svg
                     className="w-5 h-5"
@@ -269,7 +344,7 @@ export function AcademyPage() {
                 </span>
               </div>
 
-              <div className="flex items-center gap-4 py-4">
+              <div className="flex items-center gap-4 py-4" data-reveal-item="3">
                 <div className="w-9 h-9 rounded-md bg-brand-blue/20 text-brand-blue flex items-center justify-center shrink-0 border border-brand-blue/30">
                   <svg
                     className="w-5 h-5"
