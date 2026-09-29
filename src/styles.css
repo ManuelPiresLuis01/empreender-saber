@@ -267,12 +267,6 @@
     }
 }
 
-@media (max-width: 767px) {
-    [data-background-image] {
-        background-attachment: scroll;
-    }
-}
-
 @media (prefers-reduced-motion: reduce) {
     [data-reveal],
     [data-reveal-item] {

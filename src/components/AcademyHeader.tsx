@@ -110,21 +110,8 @@ export function AcademyHeader() {
         inert={!mobileMenuOpen}
         style={{ backgroundColor: "var(--page)" }}
       >
-        <div className="flex shrink-0 items-center justify-between border-b border-white/10 pb-5">
-          <span className="text-xs font-bold uppercase tracking-widest text-brand-goldLight">
-            Navegação
-          </span>
-          <button
-            aria-label="Fechar menu"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-white transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-gold"
-            onClick={() => setMobileMenuOpen(false)}
-            type="button"
-          >
-            <X aria-hidden="true" size={22} />
-          </button>
-        </div>
 
-        <ul className="mt-6 min-h-0 flex-1 space-y-2 overflow-y-auto">
+        <ul className="min-h-0 flex-1 space-y-2 overflow-y-auto">
           {NAV_LINKS.map((link) => (
             <li key={link.href}>
               <a
