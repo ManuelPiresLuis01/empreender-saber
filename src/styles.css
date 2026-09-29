@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700;800&display=swap");
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -186,7 +187,7 @@
         margin: 0;
         background-color: var(--color-page);
         color: var(--color-hero-foreground);
-        font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+        font-family: "Source Sans 3", system-ui, sans-serif;
         -webkit-font-smoothing: antialiased;
     }
     button,
