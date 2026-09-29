@@ -79,6 +79,8 @@
   --color-brand-gold: var(--brand-gold);
   --color-brand-goldLight: var(--brand-gold-light);
   --color-brand-goldMuted: var(--brand-gold-muted);
+  --color-brand-whatsapp: var(--brand-whatsapp);
+  --color-brand-whatsappDeep: var(--brand-whatsapp-deep);
 }
 
 :root {
@@ -103,6 +105,8 @@
   --brand-gold: oklch(0.62 0.16 55);
   --brand-gold-light: oklch(0.75 0.16 70);
   --brand-gold-muted: oklch(0.52 0.14 50);
+  --brand-whatsapp: oklch(0.78 0.19 155);
+  --brand-whatsapp-deep: oklch(0.66 0.16 152);
   --background: oklch(1 0 0);
   --foreground: oklch(0.129 0.042 264.695);
   --card: oklch(1 0 0);
@@ -214,4 +218,17 @@
     min-width: 100%;
     justify-content: flex-start;
   }
+}
+
+/* Header becomes transparent once the visitor scrolls down */
+[data-purpose="header-container"].is-scrolled {
+  background-color: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom-color: transparent;
+}
+
+[data-purpose="header-container"].is-scrolled nav {
+  background-color: transparent;
+  border-top-color: transparent;
 }
