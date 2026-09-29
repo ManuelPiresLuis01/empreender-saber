@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- The single-page institutional site keeps its supplied long-form content in `AcademyPage`; this preserves source fidelity while route metadata stays in the route.
