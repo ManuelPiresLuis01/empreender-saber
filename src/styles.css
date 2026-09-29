@@ -190,3 +190,28 @@
   button, a { cursor: pointer; }
   button:disabled { cursor: default; opacity: 0.8; }
 }
+
+@media (max-width: 639px) {
+  [data-purpose="header-container"] > div > div > a > div:last-child {
+    display: none;
+  }
+
+  [data-purpose="header-container"] > div > div > div:last-child > a:last-child {
+    display: none;
+  }
+
+  [data-purpose="header-container"] > div > div > div:last-child > a:first-child {
+    padding-inline: 0.75rem;
+    font-size: 0.65rem;
+  }
+
+  [data-purpose="header-container"] nav > div {
+    overflow-x: auto;
+  }
+
+  [data-purpose="header-container"] nav ul {
+    width: max-content;
+    min-width: 100%;
+    justify-content: flex-start;
+  }
+}
